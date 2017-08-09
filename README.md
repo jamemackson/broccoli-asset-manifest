@@ -1,42 +1,37 @@
-broccoli-manifest
+broccoli-asset-manifest
 =================
 
-HTML5 cache-manifest compilation for broccoli
+asset manifest compilation for broccoli
 
-A nice introduction on the subject: http://www.html5rocks.com/en/tutorials/appcache/beginner/
+a list of assets can be friendly to a precacheing of assets in a progressive web app.
 
-There's also a Wicked-Good-Ember talk on this subject, see http://confreaks.tv/videos/wickedgoodember2015-taking-ember-offline
 
 Usage for Ember Cli
 -------------------
 
-`npm install --save-dev broccoli-manifest`
-`npm install --save broccoli-merge-trees`
+`npm install --save-dev broccoli-asset-manifest`
 
 ```JavaScript
 //app/config/environment.js
 
 ENV.manifest = {
   enabled: true,
-  appcacheFile: "/manifest.appcache",
+  outputFile: "/asset-manifest.json",
   excludePaths: ['index.html', 'someother.html'],
-  includePaths: ['/'],
-  network: ['api/'],
-  showCreateDate: true
+  includePaths: ['/']
 }
 ````
 
-Upgrade your `index.html` (see below) and you are done.
 
 Usage for Broccoli.js
 ---------------------
 
-`npm install --save broccoli-manifest`
+`npm install --save broccoli-asset-manifest`
 
-Use `broccoli-manifest` as your last filter in the `Brocfile.js` like this
+Use `broccoli-asset-manifest` as your last filter in the `Brocfile.js` like this
 
 ```JavaScript
-var writeManifest = require('broccoli-manifest');
+var writeManifest = require('broccoli-asset-manifest');
 
 ...
 
@@ -53,13 +48,10 @@ You can pass some options as the second argument to `writeManifest`:
 ```JavaScript
 
 writeManifest(completeTree, {
-	appcacheFile: '/manifest.appcache', // Name of the generated appcache file - default value shown
-	fallback: ['assets/is-online.json assets/offline.json'] // Lines to add to the FALLBACK section of the generated manifest
+	outputFile: '/asset-manifest.json', // Name of the generated file - default value shown
 });
 ```
 
-`showCreateDate` toggles the inclusion of a Date object or a random string in your manifest. If you
-want to hide the build date from customers, this is your setting.
 
 Thanks to https://github.com/racido/broccoli-manifest/pull/9 files can be filtered using
 regular expressions:
@@ -92,20 +84,8 @@ module.exports = mergeTrees([completeTree, manifestTree]);
 
 
 
-Upgrade your index.html
------------------------
 
-Add `manifest="manifest.appcache"` to your `<html>` tag. The extra `<script>` tag
-adds an eventlistener which automatically refreshes your page after a cache update.
 
-Another approach is using this gist https://gist.github.com/ef4/82f37eb5dae4e56467b6
-which loads all files stated in the manifest file.
+credit:
 
-```HTML
-<!DOCTYPE html>
-<html manifest="manifest.appcache">
-<head>
-  <script type='text/javascript'>window.addEventListener('load',function(e){window.applicationCache.addEventListener('updateready',function(e){if (window.applicationCache.status==window.applicationCache.UPDATEREADY){window.applicationCache.swapCache();window.location.reload();}},false);},false);</script>
-
-  ...
-```
+based on the fine work of https://github.com/racido/broccoli-manifest
